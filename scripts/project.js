@@ -109,7 +109,8 @@ var createOrderControlBlock = function (index) {
 		if (!isNaN(quantity) && quantity > 0) {
 			var price = catalog[index].price;
 			total += price * quantity;
-			alert(`${quantity} ${catalog[index].name} ajoute au panier. Pour un total de: $${total.toFixed(2)}`);
+			addToPanier(index, quantity);
+			// alert(`${quantity} ${catalog[index].name} ajoute au panier. Pour un total de: ${total.toFixed(2)}`);
 		} else {
 			alert("La quantite ne peut pas etre inferieure a 1");
 		}
@@ -134,4 +135,109 @@ var createFigureBlock = function (product) {
 	figure.appendChild(img);
 
 	return figure;
+};
+
+
+// === Global Variables for Panier ===
+let cart = {};
+
+/* Update the panier (cart) display */
+const updatePanier = function () {
+  const cartContainer = document.querySelector("#panier .achats");
+  const totalElement = document.querySelector("#panier #montant");
+  
+  cartContainer.innerHTML = '';
+  
+  let totalAmount = 0;
+  
+  for (let id in cart) {
+    const product = cart[id];
+    const productTotal = product.price * product.quantity;
+    totalAmount += productTotal;
+
+    // Create cart item element
+    const cartItem = createCartItem(product, id);
+    cartContainer.appendChild(cartItem);
+  }
+  
+  // Update total in the cart
+  totalElement.innerText = totalAmount.toFixed(2);
+};
+
+/* Create a cart item element */
+const createCartItem = function (product, id) {
+	/**
+	 * Create the div element inside the panier div
+	 */
+
+	const div = document.createElement("div");
+	div.className = "achat";
+	/**
+	 * Set the id of card item from the product id
+	 */
+
+	div.id = `${id}-achat`;
+
+	/**
+	 * Make the figure for the cart, using the product from the boutique
+	 */
+	const figure = document.createElement("figure");
+	const img = document.createElement("img");
+	img.src = product.image;
+	img.alt = product.name;
+	figure.appendChild(img);
+	div.appendChild(figure);
+
+	/**
+	 * The same as the boutique, but for the cart we use instead the same description when we handle the button add to cart
+	 */
+	div.appendChild(createBlock("h4", product.name));
+
+	/**
+	 * Quantity of the product from the boutique
+	 */
+	div.appendChild(createBlock("div", `${product.quantity}`, "quantite"));
+
+	/**
+	 * The price from the product of the boutique
+	 */
+	const productTotal = product.price * product.quantity;
+
+	div.appendChild(createBlock("div", `${product.price}`, "prix"));
+	/**
+	 * Create remove button for cart, using event listener
+	 */
+	const removeBtn = document.createElement("button");
+	removeBtn.className = "retirer";
+	removeBtn.addEventListener("click", function () {
+		removeFromPanier(id);
+	});
+	div.appendChild(removeBtn);
+
+	return div;
+};
+
+/**
+ * Function to add product to the cart, that we called when we create an orderBlock, 
+ * here we take the product index and the quantity of the product
+ */
+const addToPanier = function (productIndex, quantity) {
+  const product = catalog[productIndex];
+  if (cart[productIndex]) {
+    cart[productIndex].quantity += quantity;
+  } else {
+    cart[productIndex] = {
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      quantity: quantity
+    };
+  }
+  updatePanier();
+};
+
+/* Remove a product from the panier */
+const removeFromPanier = function (productIndex) {
+  delete cart[productIndex];
+  updatePanier();
 };
