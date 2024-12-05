@@ -1,4 +1,5 @@
-// YOUR NAME HERE
+// RAKOTOSON Hasimbola
+// LEGRAND Sophie
 
 // === constants ===
 const MAX_QTY = 9;
@@ -6,21 +7,15 @@ const productIdKey = "product";
 const orderIdKey = "order";
 const inputIdKey = "qte";
 
-// === global variables  ===
-// the total cost of selected products 
+// === global variables ===
 var total = 0;
-
-
 
 // function called when page is loaded, it performs initializations 
 var init = function () {
 	createShop();
-	
-	// TODO : add other initializations to achieve if you think it is required
-}
+};
+
 window.addEventListener("load", init);
-
-
 
 // usefull functions
 
@@ -30,10 +25,10 @@ window.addEventListener("load", init);
 */
 var createShop = function () {
 	var shop = document.getElementById("boutique");
-	for(var i = 0; i < catalog.length; i++) {
+	for (var i = 0; i < catalog.length; i++) {
 		shop.appendChild(createProduct(catalog[i], i));
 	}
-}
+};
 
 /*
 * create the div.produit elment corresponding to the given product
@@ -42,26 +37,29 @@ var createShop = function () {
 * @param index (int) = the index of the product in catalog, used to set the id of the created element
 */
 var createProduct = function (product, index) {
-	// build the div element for product
+	// Build the div element for product
 	var block = document.createElement("div");
 	block.className = "produit";
 	// set the id for this product
 	block.id = index + "-" + productIdKey;
+
 	// build the h4 part of 'block'
 	block.appendChild(createBlock("h4", product.name));
-	
+
 	// /!\ should add the figure of the product... does not work yet... /!\ 
 	block.appendChild(createFigureBlock(product));
 
 	// build and add the div.description part of 'block' 
 	block.appendChild(createBlock("div", product.description, "description"));
+
 	// build and add the div.price part of 'block'
 	block.appendChild(createBlock("div", product.price, "prix"));
+
 	// build and add control div block to product element
 	block.appendChild(createOrderControlBlock(index));
-	return block;
-}
 
+	return block;
+};
 
 /* return a new element of tag 'tag' with content 'content' and class 'cssClass'
  * @param tag (string) = the type of the created element (example : "p")
@@ -70,12 +68,12 @@ var createProduct = function (product, index) {
  */
 var createBlock = function (tag, content, cssClass) {
 	var element = document.createElement(tag);
-	if (cssClass != undefined) {
-		element.className =  cssClass;
+	if (cssClass) {
+		element.className = cssClass;
 	}
 	element.innerHTML = content;
 	return element;
-}
+};
 
 /*
 * builds the control element (div.controle) for a product
@@ -96,20 +94,29 @@ var createOrderControlBlock = function (index) {
 	input.value = "0";
 	input.min = "0";
 	input.max = MAX_QTY.toString();
-	// add input to control as its child
 	control.appendChild(input);
-	
+
 	// create order button
 	var button = document.createElement("button");
 	button.className = 'commander';
 	button.id = index + "-" + orderIdKey;
 	// add control to control as its child
 	control.appendChild(button);
-	
-	// the built control div node is returned
-	return control;
-}
 
+	// Event handler for button
+	button.addEventListener("click", function () {
+		var quantity = parseInt(input.value);
+		if (!isNaN(quantity) && quantity > 0) {
+			var price = catalog[index].price;
+			total += price * quantity;
+			alert(`${quantity} ${catalog[index].name} ajoute au panier. Pour un total de: $${total.toFixed(2)}`);
+		} else {
+			alert("La quantite ne peut pas etre inferieure a 1");
+		}
+	});
+
+	return control;
+};
 
 /*
 * create and return the figure block for this product
@@ -119,7 +126,12 @@ var createOrderControlBlock = function (index) {
 * TODO : write the correct code
 */
 var createFigureBlock = function (product) {
-	// this is absolutely not the correct answer !
-	// TODO 
-	return createBlock("figure", "");
-}
+	var figure = document.createElement("figure");
+
+	var img = document.createElement("img");
+	img.src = product.image;
+	img.alt = product.name;
+	figure.appendChild(img);
+
+	return figure;
+};
