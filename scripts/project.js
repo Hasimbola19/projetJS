@@ -240,4 +240,8 @@ const addToPanier = function (productIndex, quantity) {
 const removeFromPanier = function (productIndex) {
   delete cart[productIndex];
   updatePanier();
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> origin/main
