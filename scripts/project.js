@@ -234,8 +234,19 @@ const createCartItem = function (product, id) {
  */
 const addToPanier = function (productIndex, quantity) {
   const product = catalog[productIndex];
+  /**  
+   * variable temporaire pour la vérification de quantité max du panier : tempQuantity
+   * si tempQuantity supérieur à 9, un message d'alert est émit.
+  */
+  let tempQuantity;
   if (cart[productIndex]) {
-    cart[productIndex].quantity += quantity;
+	tempQuantity = cart[productIndex].quantity + quantity;
+	if (tempQuantity <= MAX_QTY){
+		cart[productIndex].quantity += quantity;
+	}
+    else {
+		alert("La quantité maximum pour un même article est de 9");
+	}
   } else {
     cart[productIndex] = {
       name: product.name,
