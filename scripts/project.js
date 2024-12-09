@@ -103,6 +103,17 @@ var createOrderControlBlock = function (index) {
 	// add control to control as its child
 	control.appendChild(button);
 
+	input.addEventListener("input", function () {
+		var quantity = parseInt(input.value);
+		if (!isNaN(quantity) && quantity > 0) {
+		  button.style.opacity = "1";
+		  button.style.cursor = "pointer"; // Change cursor to pointer when quantity is greater than 0
+		} else {
+		  button.style.opacity = "0.25";
+		  button.style.cursor = "wait"; // Change cursor to wait when quantity is 0
+		}
+	});
+
 	// Event handler for button
 	button.addEventListener("click", function () {
 		var quantity = parseInt(input.value);
@@ -240,8 +251,4 @@ const addToPanier = function (productIndex, quantity) {
 const removeFromPanier = function (productIndex) {
   delete cart[productIndex];
   updatePanier();
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> origin/main
