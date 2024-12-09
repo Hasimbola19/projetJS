@@ -109,8 +109,7 @@ var createOrderControlBlock = function (index) {
 		  button.style.opacity = "1";
 		  button.style.cursor = "pointer"; // Change cursor to pointer when quantity is greater than 0
 		} else {
-		  button.style.opacity = "0.25";
-		  button.style.cursor = "wait"; // Change cursor to wait when quantity is 0
+		  buttonStyle(button);
 		}
 	});
 
@@ -121,6 +120,8 @@ var createOrderControlBlock = function (index) {
 			var price = catalog[index].price;
 			total += price * quantity;
 			addToPanier(index, quantity);
+			buttonStyle(button);
+			input.value = "0";
 			// alert(`${quantity} ${catalog[index].name} ajoute au panier. Pour un total de: ${total.toFixed(2)}`);
 		} else {
 			alert("La quantite ne peut pas etre inferieure a 1");
@@ -129,6 +130,11 @@ var createOrderControlBlock = function (index) {
 
 	return control;
 };
+
+var buttonStyle = function(button){
+	button.style.opacity = "0.25";
+	button.style.cursor = "wait";
+}
 
 /*
 * create and return the figure block for this product
@@ -234,8 +240,19 @@ const createCartItem = function (product, id) {
  */
 const addToPanier = function (productIndex, quantity) {
   const product = catalog[productIndex];
+  /**  
+   * variable temporaire pour la vérification de quantité max du panier : tempQuantity
+   * si tempQuantity supérieur à 9, un message d'alert est émit.
+  */
+  let tempQuantity;
   if (cart[productIndex]) {
-    cart[productIndex].quantity += quantity;
+	tempQuantity = cart[productIndex].quantity + quantity;
+	if (tempQuantity <= MAX_QTY){
+		cart[productIndex].quantity += quantity;
+	}
+    else {
+		alert("La quantité maximum pour un même article est de 9");
+	}
   } else {
     cart[productIndex] = {
       name: product.name,
