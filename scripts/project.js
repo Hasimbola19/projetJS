@@ -185,7 +185,7 @@ const updatePanier = function () {
   
   // Update total in the cart
   totalElement.innerText = totalAmount.toFixed(2);
-  savePanierToLocalStorage();
+  // savePanierToLocalStorage();
 };
 
 /* Create a cart item element */
@@ -401,11 +401,20 @@ const catalogListeDeroulante = function () {
   saveCartButton.addEventListener('click', savePanierToLocalStorage);
   controlsDiv.appendChild(saveCartButton);
 
+  const deleteCartButton = document.createElement('button');
+  deleteCartButton.innerText = "Supprimer le panier";
+  deleteCartButton.addEventListener('click', deletePanierToLocalStorage);
+  controlsDiv.appendChild(deleteCartButton);
+
 });
 
 /* Save the cart to localStorage */
 const savePanierToLocalStorage = function () {
   localStorage.setItem('cart', JSON.stringify(cart));
+};
+
+const deletePanierToLocalStorage = function () {
+  localStorage.removeItem('cart');
 };
 
 /* Load the cart from localStorage */
