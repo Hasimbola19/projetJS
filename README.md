@@ -14,3 +14,4 @@ Chacun à fait sa partie et à envoyer son code
 7 - Suppression des elements du panier fonctionnel, on a creer un block pour le control de la suppression du panier
 8 - Modification de la quantité d'un article dans le panier fonctionnel, on a creer un block control pour la modification de la quantite du panier
 9 - Sauvegarde de l'etat du panier dans licalStorage fonctionnel, pour cette partie, on a juste pris le panier en json et on a sauvegarder directement dans localStorage, lors de l'initialisation de la page, on appelle la fonction qui va checker si le localstorage est vide ou pas, si c'est vide, le panier est vide, sinon, les elements sont disposees avec la fonction loadPanierFromLocalStorage
+10 - Supprimer tout les elements dans le localStorage
