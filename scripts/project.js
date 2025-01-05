@@ -322,17 +322,16 @@ const loadCatalog = function (fileName) {
  /**
   * Function to search, filter products
   *  */ 
-const search = function () {
-    const searchValue = document.getElementById("filter").value;
-    const shop = document.getElementById("boutique");
-    shop.innerHTML = "";
-    for (var i = 0; i < catalog.length; i++) {
+  const search = function () {
+  const searchValue = document.getElementById("filter").value;
+  const shop = document.getElementById("boutique");
+  shop.innerHTML = "";
+  for (var i = 0; i < catalog.length; i++) {
       if (catalog[i].name.toLowerCase().includes(searchValue.toLowerCase())) {
-        shop.appendChild(createProduct(catalog[i], i));
+          shop.appendChild(createProduct(catalog[i], i));
       }
-    }
-    createShop();
-}
+  }
+};
   
 /**
  * Event to load the page automatically, when key pressed in filter section
