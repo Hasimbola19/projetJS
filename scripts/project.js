@@ -10,6 +10,7 @@ const inputIdKey = "qte";
 
 // === global variables ===
 var total = 0;
+var catalogSelection;
 
 // function called when page is loaded
 var init = function () {
@@ -172,13 +173,13 @@ const updatePanier = function () {
   
   let totalAmount = 0;
   
-  for (let id in cart) {
-    const product = cart[id];
+  for (let cartClef in cart) {
+    const product = cart[cartClef];
     const productTotal = product.price * product.quantity;
     totalAmount += productTotal;
 
     // Create cart item element
-    const cartItem = createCartItem(product, id);
+    const cartItem = createCartItem(product, cartClef);
     cartContainer.appendChild(cartItem);
   }
   
@@ -188,7 +189,7 @@ const updatePanier = function () {
 };
 
 /* Create a cart item element */
-const createCartItem = function (product, id) {
+const createCartItem = function (product, cartClef) {
     /**
      * Create the div element inside the panier div
      */
@@ -196,10 +197,10 @@ const createCartItem = function (product, id) {
     const div = document.createElement("div");
     div.className = "achat";
     /**
-     * Set the id of card item from the product id
+     * Set the id (id modifier en cartClef) of card item from the product id
      */
 
-    div.id = `${id}-achat`;
+    div.id = `${cartClef}-achat`;
 
     /**
      * Make the figure for the cart, using the product from the boutique
@@ -225,7 +226,7 @@ const createCartItem = function (product, id) {
     quantityInput.min = "1";
     quantityInput.max = MAX_QTY.toString();
     quantityInput.addEventListener("input", function () {
-        updateCartItemQuantity(id, parseInt(quantityInput.value));
+        updateCartItemQuantity(cartClef, parseInt(quantityInput.value), quantityInput.catalogSelect);
     });
     div.appendChild(quantityInput);
 
@@ -241,7 +242,7 @@ const createCartItem = function (product, id) {
     const removeBtn = document.createElement("button");
     removeBtn.className = "retirer";
     removeBtn.addEventListener("click", function () {
-        removeFromPanier(id);
+        removeFromPanier(cartClef);
     });
     div.appendChild(removeBtn);
 
@@ -254,43 +255,57 @@ const createCartItem = function (product, id) {
  */
 const addToPanier = function (productIndex, quantity) {
   const product = catalog[productIndex];
+  /**
+   * Création d'une clé composé du catalogue et de l'index du produit.
+   * Elle servira ensuite à comparer les produits pour savoir s'il faut l'ajouter ou
+   * mettre à jour le panier
+   **/
+  const cartClef = `${catalogSelection}-${productIndex}`;
   /**  
    * variable temporaire pour la vérification de quantité max du panier : tempQuantity
    * si tempQuantity supérieur à 9, un message d'alert est émit.
   */
   let tempQuantity;
-  if (cart[productIndex]) {
-    tempQuantity = cart[productIndex].quantity + quantity;
+  if (cart[cartClef]) {
+    tempQuantity = cart[cartClef].quantity + quantity;
     if (tempQuantity <= MAX_QTY){
-        cart[productIndex].quantity += quantity;
+        cart[cartClef].quantity += quantity;
     }
     else {
-        alert("La quantité maximum pour un même article est de 9");
-    }
+		alert("La quantité maximum pour un même article est de 9");
+	}
   } else {
-    cart[productIndex] = {
-      name: product.name,
-      image: product.image,
-      price: product.price,
-      quantity: quantity
-    };
+	if (quantity >MAX_QTY){
+		alert("La quantité maximum pour un même article est de 9");
+	} else {
+		cart[cartClef] = {
+			name: product.name,
+			image: product.image,
+			price: product.price,
+			quantity: quantity,
+      catalog: catalogSelection
+		  };
+	}
+
   }
   updatePanier();
 };
 
 /* Remove a product from the panier */
-const removeFromPanier = function (productIndex) {
-  delete cart[productIndex];
+const removeFromPanier = function (cartClef) {
+  delete cart[cartClef];
   updatePanier();
 };
 
 /* Update the quantity of a cart item */
-const updateCartItemQuantity = function (productIndex, quantity) {
-  if (quantity > 0 && quantity <= MAX_QTY) {
-    cart[productIndex].quantity = quantity;
-    updatePanier();
-  } else {
-    alert("La quantité doit être comprise entre 1 et " + MAX_QTY);
+const updateCartItemQuantity = function (cartClef, quantity) {
+  if (cart[cartClef]) {
+    if (quantity > 0 && quantity <= MAX_QTY) {
+      cart[productIndex].quantity = quantity;
+      updatePanier();
+    } else {
+      alert("La quantité doit être comprise entre 1 et " + MAX_QTY);
+    }
   }
 };
 
@@ -343,7 +358,7 @@ filter.addEventListener("keyup", function (event) {
 const catalogListeDeroulante = function () {
     const dataFiles = ['catalog1.js', 'catalog2.js', 'catalog3.js', 'catalog4.js'];
     const select = document.createElement('select');
-    select.id = 'catalogSelect';
+    //select.id = 'catalogSelect';
 
     dataFiles.forEach(file => {
     const option = document.createElement('option');
@@ -352,9 +367,14 @@ const catalogListeDeroulante = function () {
     select.appendChild(option);
     });
 
+    //Initialise la variable catalogSelection
+    catalogSelection = dataFiles[0];
+
     select.addEventListener('change', function () {
-    document.getElementById('boutique').innerHTML = '';
-    loadCatalog(this.value);
+      //récupération du catalogue sélectionné pour les mise à jour du panier
+      catalogSelection = this.value;
+      document.getElementById('boutique').innerHTML = '';
+      loadCatalog(this.value);
     });
 
     document.body.insertBefore(select, document.getElementById('boutique'));
