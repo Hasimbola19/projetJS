@@ -226,7 +226,7 @@ const createCartItem = function (product, cartClef) {
     quantityInput.min = "1";
     quantityInput.max = MAX_QTY.toString();
     quantityInput.addEventListener("input", function () {
-        updateCartItemQuantity(cartClef, parseInt(quantityInput.value), quantityInput.catalogSelect);
+        updateCartItemQuantity(cartClef, parseInt(quantityInput.value));
     });
     div.appendChild(quantityInput);
 
@@ -301,7 +301,7 @@ const removeFromPanier = function (cartClef) {
 const updateCartItemQuantity = function (cartClef, quantity) {
   if (cart[cartClef]) {
     if (quantity > 0 && quantity <= MAX_QTY) {
-      cart[productIndex].quantity = quantity;
+      cart[cartClef].quantity = quantity;
       updatePanier();
     } else {
       alert("La quantité doit être comprise entre 1 et " + MAX_QTY);
@@ -338,56 +338,69 @@ const search = function () {
  * Event to load the page automatically, when key pressed in filter section
  */
 document.addEventListener('DOMContentLoaded', function () {
-const filter = document.getElementById("filter");
+  // Create a div for controls (catalog select and save cart button)
+  const controlsDiv = document.createElement('div');
+  controlsDiv.id = 'controls';
+  document.body.insertBefore(controlsDiv, document.getElementById('boutique'));
 
-/**
- * Call the search function when the input value changes
- */
-filter.addEventListener("input", function (event) {
-    search(); // Appelle la fonction de recherche à chaque changement de valeur
-});
+  // Create a div for shop (products and cart)
+  const shopDiv = document.createElement('div');
+  shopDiv.id = 'shop';
+  const boutiqueDiv = document.getElementById('boutique');
+  const panierDiv = document.getElementById('panier');
+  shopDiv.appendChild(boutiqueDiv);
+  shopDiv.appendChild(panierDiv);
+  document.body.appendChild(shopDiv);
+  const filter = document.getElementById("filter");
 
-/**
- * Show the value of the key pressed in the console
- */
-filter.addEventListener("keyup", function (event) {
-    console.log(event.key); // Affiche la touche pressée dans la console
-});
+  /**
+   * Call the search function when the input value changes
+   */
+  filter.addEventListener("input", function (event) {
+      search(); // Appelle la fonction de recherche à chaque changement de valeur
+  });
+
+  /**
+   * Show the value of the key pressed in the console
+   */
+  filter.addEventListener("keyup", function (event) {
+      console.log(event.key); // Affiche la touche pressée dans la console
+  });
 
 // Function to create a dropdown list of catalog files
 const catalogListeDeroulante = function () {
-    const dataFiles = ['catalog1.js', 'catalog2.js', 'catalog3.js', 'catalog4.js'];
-    const select = document.createElement('select');
-    //select.id = 'catalogSelect';
+  const dataFiles = ['catalog1.js', 'catalog2.js', 'catalog3.js', 'catalog4.js'];
+  const select = document.createElement('select');
+  select.id = 'catalogSelect';
 
-    dataFiles.forEach(file => {
+  dataFiles.forEach(file => {
     const option = document.createElement('option');
     option.value = file;
     option.text = file;
     select.appendChild(option);
-    });
+  });
 
-    //Initialise la variable catalogSelection
-    catalogSelection = dataFiles[0];
+  //Initialise la variable catalogSelection
+  catalogSelection = dataFiles[0];
 
-    select.addEventListener('change', function () {
-      //récupération du catalogue sélectionné pour les mise à jour du panier
-      catalogSelection = this.value;
-      document.getElementById('boutique').innerHTML = '';
-      loadCatalog(this.value);
-    });
+  select.addEventListener('change', function () {
+    //récupération du catalogue sélectionné pour les mise à jour du panier
+    catalogSelection = this.value;
+    document.getElementById('boutique').innerHTML = '';
+    loadCatalog(this.value);
+  });
 
-    document.body.insertBefore(select, document.getElementById('boutique'));
+  controlsDiv.appendChild(select);
 };
 
-// Call the function to create the dropdown list
-catalogListeDeroulante();
+  // Call the function to create the dropdown list
+  catalogListeDeroulante();
 
-// Add save cart button
-const saveCartButton = document.createElement('button');
-saveCartButton.innerText = "Sauvegarder le panier";
-saveCartButton.addEventListener('click', savePanierToLocalStorage);
-document.body.insertBefore(saveCartButton, document.getElementById('boutique'));
+  // Add save cart button
+  const saveCartButton = document.createElement('button');
+  saveCartButton.innerText = "Sauvegarder le panier";
+  saveCartButton.addEventListener('click', savePanierToLocalStorage);
+  controlsDiv.appendChild(saveCartButton);
 
 });
 
