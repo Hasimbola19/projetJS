@@ -10,6 +10,7 @@ const inputIdKey = "qte";
 
 // === global variables ===
 var total = 0;
+var catalogSelection = "catalog1.js";
 
 // function called when page is loaded
 var init = function () {
@@ -178,7 +179,7 @@ const updatePanier = function () {
     totalAmount += productTotal;
 
     // Create cart item element
-    const cartItem = createCartItem(product, id);
+    const cartItem = createCartItem(product, id, catalogSelection);
     cartContainer.appendChild(cartItem);
   }
   
@@ -188,7 +189,7 @@ const updatePanier = function () {
 };
 
 /* Create a cart item element */
-const createCartItem = function (product, id) {
+const createCartItem = function (product, id, catalogSelection) {
     /**
      * Create the div element inside the panier div
      */
@@ -220,12 +221,14 @@ const createCartItem = function (product, id) {
      * Quantity of the product from the boutique
      */
     const quantityInput = document.createElement("input");
+    //Ajout d'une constante sur le catalogue sélectionné avec la sauvegarde de catalogSelection
+    quantityInput.catalogSelect = catalogSelection;
     quantityInput.type = "number";
     quantityInput.value = product.quantity;
     quantityInput.min = "1";
     quantityInput.max = MAX_QTY.toString();
     quantityInput.addEventListener("input", function () {
-        updateCartItemQuantity(id, parseInt(quantityInput.value));
+        updateCartItemQuantity(id, parseInt(quantityInput.value), quantityInput.catalogSelect);
     });
     div.appendChild(quantityInput);
 
@@ -252,7 +255,7 @@ const createCartItem = function (product, id) {
  * Function to add product to the cart, that we called when we create an orderBlock, 
  * here we take the product index and the quantity of the product
  */
-const addToPanier = function (productIndex, quantity) {
+const addToPanier = function (productIndex, quantity, catalogSelection) {
   const product = catalog[productIndex];
   /**  
    * variable temporaire pour la vérification de quantité max du panier : tempQuantity
@@ -275,7 +278,8 @@ const addToPanier = function (productIndex, quantity) {
 			name: product.name,
 			image: product.image,
 			price: product.price,
-			quantity: quantity
+			quantity: quantity,
+      catalog: catalogSelection
 		  };
 	}
 
@@ -290,12 +294,14 @@ const removeFromPanier = function (productIndex) {
 };
 
 /* Update the quantity of a cart item */
-const updateCartItemQuantity = function (productIndex, quantity) {
-  if (quantity > 0 && quantity <= MAX_QTY) {
-    cart[productIndex].quantity = quantity;
-    updatePanier();
-  } else {
-    alert("La quantité doit être comprise entre 1 et " + MAX_QTY);
+const updateCartItemQuantity = function (productIndex, quantity, catalogSelect) {
+  if (cart[productIndex].catalog =! catalogSelect) {
+    if (quantity > 0 && quantity <= MAX_QTY) {
+      cart[productIndex].quantity = quantity;
+      updatePanier();
+    } else {
+      alert("La quantité doit être comprise entre 1 et " + MAX_QTY);
+    }
   }
 };
 
@@ -358,8 +364,10 @@ const catalogListeDeroulante = function () {
     });
 
     select.addEventListener('change', function () {
-    document.getElementById('boutique').innerHTML = '';
-    loadCatalog(this.value);
+      //récupération du catalogue sélectionné pour les mise à jour du panier
+      catalogSelection = this.value;
+      document.getElementById('boutique').innerHTML = '';
+      loadCatalog(this.value);
     });
 
     document.body.insertBefore(select, document.getElementById('boutique'));
