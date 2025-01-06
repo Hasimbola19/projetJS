@@ -2,7 +2,7 @@
 Projet web aquilina
 
 
-Mode de travaiL, utilisation de github, lien vers le projet : https://github.com/Hasimbola19/projetJS
+Mode de travail, utilisation de github, lien vers le projet : https://github.com/Hasimbola19/projetJS
 Distribution de tache, Sophie partie panier, Hasimbola partie Boutique et sauvegarde du panier dans le localStorage, Bader partie catalog
 Chacun à fait sa partie et à envoyer son code
 1 - Les images sont affichées de manière dynamique, en créant de block createProduct que l'on boucle lors de la création de la boutique à l'initialisation de la page
